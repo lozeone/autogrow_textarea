@@ -8,12 +8,12 @@
 
   Drupal.behaviors.jquery_ns_autogrow = {
     attach: function (context, settings) {
-      $('textarea', context)
-        .once('jquery-ns-autogrow')
-        .autogrow({
+      $('textarea.autogrow-textarea', context).once('jquery-ns-autogrow').each(function(){
+        $(this).autogrow({
           horizontal: false,
           flickering: false
-        });
+        }).css('maxHeight', $(this).data('autogrow-max'));
+      });
     }
   };
 

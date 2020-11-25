@@ -1,13 +1,73 @@
 <?php
 
+use Drupal\Core\Field\WidgetInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_element_info_alter().
  */
-function autogrow_textarea_element_info_alter(array &$types) {
+/*function autogrow_textarea_element_info_alter(array &$types) {
   // Change the way the textarea element is used.
   if (isset($types['textarea'])) {
     // Add the jQuery NS Autogrow behavior to the page.
     $library = 'autogrow_textarea/autogrow_textarea_behaviors';
     $types['textarea']['#attached']['library'][] = $library;
   }
+}*/
+
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function autogrow_textarea_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+  $element = [];
+
+  if (in_array($plugin->getPluginId(), ['text_textarea', 'text_textarea_with_summary'])) {
+    $element['autogrow_textarea'] = array(
+      '#type' => 'details',
+      '#title' => t('Autogrow'),
+      '#open' => TRUE,
+      '#tree' => FALSE,
+    );
+    $element['autogrow_textarea_enabled'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable autogrow'),
+      '#default_value' => $plugin->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled'),
+      '#group' => 'autogrow_textarea',
+    );
+    $element['autogrow_textarea_max_height'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Max height'),
+      '#description' => t('The css max-height value the textarea may grow to.'),
+      '#default_value' => $plugin->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_max_height'),
+      '#group' => 'autogrow_textarea',
+    );
+  }
+  return $element;
 }
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function autogrow_textarea_field_widget_settings_summary_alter(&$summary, $context) {
+  if (in_array($context['widget']->getPluginId(), ['text_textarea', 'text_textarea_with_summary'])) {
+    if ($context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled')) {
+      $summary[] = t('Autogrow enabled');
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function autogrow_textarea_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if($context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled')){
+    $element['#attributes']['class'][] = 'autogrow-textarea';
+    $element['#attached']['library'][] = 'autogrow_textarea/autogrow_textarea_behaviors';
+    if($max_height = $context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_max_height')){
+      $element['#attributes']['data-autogrow-max'] = $max_height;
+    }
+  }
+}
+
