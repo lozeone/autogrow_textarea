@@ -1,6 +1,6 @@
 this is a fork of kalamuna/autogrow_textarea
 
-It adds the ability to enable wich fields have the autogrow script applied from the form field UI settings.
+It adds the ability to enable which textarea fields have the autogrow script applied from the form field UI settings instead of applying the script to all textareas
 
 # Autogrow Textarea Drupal Module
 
