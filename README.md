@@ -1,3 +1,6 @@
+this is a fork of kalamuna/autogrow_textarea
+It adds the ability to enable wich fields have the autogrow script applied from the form field UI settings.
+
 # Autogrow Textarea Drupal Module
 
 Adds [jQuery NS-Autogrow](https://github.com/ro31337/jquery.ns-autogrow) to Drupal's `textarea` Form API element.
