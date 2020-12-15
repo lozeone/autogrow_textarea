@@ -1,21 +1,8 @@
 <?php
 
-use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Form\FormStateInterface;
-
-/**
- * Implements hook_element_info_alter().
- */
-/*function autogrow_textarea_element_info_alter(array &$types) {
-  // Change the way the textarea element is used.
-  if (isset($types['textarea'])) {
-    // Add the jQuery NS Autogrow behavior to the page.
-    $library = 'autogrow_textarea/autogrow_textarea_behaviors';
-    $types['textarea']['#attached']['library'][] = $library;
-  }
-}*/
-
 
 /**
  * Implements hook_field_widget_third_party_settings_form().
@@ -34,6 +21,13 @@ function autogrow_textarea_field_widget_third_party_settings_form(WidgetInterfac
       '#type' => 'checkbox',
       '#title' => t('Enable autogrow'),
       '#default_value' => $plugin->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled'),
+      '#group' => 'autogrow_textarea',
+    );
+    $element['autogrow_textarea_min_height'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Min height'),
+      '#description' => t('The css min-height value the textarea may shrink to.'),
+      '#default_value' => $plugin->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_min_height'),
       '#group' => 'autogrow_textarea',
     );
     $element['autogrow_textarea_max_height'] = array(
@@ -62,12 +56,14 @@ function autogrow_textarea_field_widget_settings_summary_alter(&$summary, $conte
  * Implements hook_field_widget_form_alter().
  */
 function autogrow_textarea_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if($context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled')){
+  if ($context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_enabled', FALSE)) {
     $element['#attributes']['class'][] = 'autogrow-textarea';
     $element['#attached']['library'][] = 'autogrow_textarea/autogrow_textarea_behaviors';
     if($max_height = $context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_max_height')){
       $element['#attributes']['data-autogrow-max'] = $max_height;
     }
+    if ($min_height = $context['widget']->getThirdPartySetting('autogrow_textarea', 'autogrow_textarea_min_height')) {
+      $element['#attributes']['data-autogrow-min'] = $min_height;
+    }
   }
 }
-

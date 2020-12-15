@@ -1,6 +1,6 @@
 /**
  * @file
- * Add jQuery NS Autogrow to every textarea.
+ * Add jQuery NS Autogrow to enabled textareas.
  */
 (function ($, Drupal) {
 
@@ -9,10 +9,20 @@
   Drupal.behaviors.jquery_ns_autogrow = {
     attach: function (context, settings) {
       $('textarea.autogrow-textarea', context).once('jquery-ns-autogrow').each(function(){
-        $(this).autogrow({
+        var $el = $(this);
+        $el.autogrow({
           horizontal: false,
-          flickering: false
-        }).css('maxHeight', $(this).data('autogrow-max'));
+          flickering: false,
+        })
+
+        if($el.data('autogrow-max')){
+          $el.css('maxHeight', $el.data('autogrow-max'));
+        }
+
+        if($el.data('autogrow-min')){
+          $el.css('minHeight', $el.data('autogrow-min'));
+        }
+
       });
     }
   };
